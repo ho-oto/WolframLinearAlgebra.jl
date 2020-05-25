@@ -3,6 +3,9 @@ uuid = "27fba304-d687-42be-a11c-3b6388a6bebe"
 authors = ["Hayate Nakano"]
 version = "0.1.0"
 
+[deps]
+MathLink = "18c93696-a329-5786-9845-8443133fa0b4"
+
 [compat]
 julia = "1.4.1"
 
