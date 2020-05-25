@@ -1,6 +1,6 @@
 module WolframLinearAlgebra
 
-import Base: zero, one, +, -, *, /, ^, sqrt, conj, adjoint
+import Base: promote_rule, zero, one, +, -, *, /, ^, sqrt, conj, adjoint
 import Base: sin, cos, tan, sinh, cosh, tanh, asin, acos, atan, asinh, acosh, atanh
 import Base: log, log2, log10, exp
 
@@ -16,6 +16,7 @@ struct WElements
     val::T where {T<:Union{Integer,AbstractFloat,WSymbol,WExpr,WInteger,WReal}}
     WElements(val) = _iswlist(val) ? error("") : new(val)
 end
+promote_rule(::Type{WElements}, ::Type{T}) where T<: Number = WElements
 macro WE_str(s::AbstractString)
     WElements(WSymbol(s))
 end
@@ -26,7 +27,7 @@ end
 function (s::WElements)(args...)
     s.val isa WSymbol || error("")
     all(x -> x isa Union{WElements,Number,WSymbol,WExpr,WInteger,WReal}, args) || error("")
-    any(x -> x isa AbstractIrrational) && error("")
+    any(x -> x isa AbstractIrrational, args) && error("")
     args = map(x -> x isa WElements ? x : WElements(x), args)
     WElements((s.val)(map(x -> x.val, args)...))
 end
@@ -35,6 +36,18 @@ end
 (*)(a::WElements, b::WElements) = WE"Times"(a, b)
 (/)(a::WElements, b::WElements) = WE"Divide"(a, b)
 (^)(a::WElements, b::WElements) = WE"Power"(a, b)
+
+(+)(a::WElements, b::Number) = WE"Plus"(a, WElements(b))
+(-)(a::WElements, b::Number) = WE"Subtract"(a, WElements(b))
+(*)(a::WElements, b::Number) = WE"Times"(a, WElements(b))
+(/)(a::WElements, b::Number) = WE"Divide"(a, WElements(b))
+(^)(a::WElements, b::Number) = WE"Power"(a, WElements(b))
+
+(+)(a::Number, b::WElements) = WE"Plus"(WElements(a), b)
+(-)(a::Number, b::WElements) = WE"Subtract"(WElements(a), b)
+(*)(a::Number, b::WElements) = WE"Times"(WElements(a), b)
+(/)(a::Number, b::WElements) = WE"Divide"(WElements(a), b)
+(^)(a::Number, b::WElements) = WE"Power"(WElements(a), b)
 
 WElements(val::Complex) = WElements(real(val)) + WElements(imag(val)) * WE"I"
 WElements(val::Rational) = WElements(numerator(val)) / WElements(denominator(val))
