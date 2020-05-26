@@ -4,6 +4,7 @@ authors = ["Hayate Nakano"]
 version = "0.1.0"
 
 [deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MathLink = "18c93696-a329-5786-9845-8443133fa0b4"
 
 [compat]
