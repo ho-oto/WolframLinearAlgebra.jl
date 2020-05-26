@@ -19,6 +19,7 @@ struct WElem
 end
 
 promote_rule(::Type{WElem}, ::Type{T}) where {T<:Number} = WElem
+weval(x::WElem) = WElem(weval(x.val))
 
 macro WE_str(s::AbstractString)
     WElem(WSymbol(s))
@@ -53,13 +54,17 @@ end
 (/)(a::Number, b::WElem) = WElem(a) / b
 (^)(a::Number, b::WElem) = WElem(a)^b
 
+WElem(val::Irrational{:π}) = WE"Pi"
+WElem(val::Irrational{:ℯ}) = WE"E"
+WElem(val::Irrational{:φ}) = WE"GoldenRatio"
+WElem(val::Irrational{:γ}) = WE"EulerGamma"
+WElem(val::Irrational{:catalan}) = WE"Catalan"
 WElem(val::Complex) = WElem(real(val)) + WElem(imag(val)) * WE"I"
 WElem(val::Rational) = WElem(numerator(val)) / WElem(denominator(val))
 
 zero(::Type{WElem}) = WElem(0)
 one(::Type{WElem}) = WElem(1)
 
-weval(x::WElem) = WElem(weval(x.val))
 simplify(x::WElem) = weval(WE"Simplify"(x))
 
 struct WSolver
