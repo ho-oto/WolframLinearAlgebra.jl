@@ -10,13 +10,16 @@ export WElem, WSolver, @WE_str, @WE_cmd, @WS_str
 export weval, simplify
 export weigen, wsvd, wqr
 
-_iswlist(x) = false
-_iswlist(x::WExpr) = x.head == W"List"
+iswlist(x) = false
+iswlist(x::WExpr) = x.head == W"List"
+
 struct WElem
     val::T where {T<:Union{Integer,AbstractFloat,WSymbol,WExpr,WInteger,WReal}}
-    WElem(val) = _iswlist(val) ? error("") : new(val)
+    WElem(val) = iswlist(val) ? error("") : new(val)
 end
+
 promote_rule(::Type{WElem}, ::Type{T}) where {T<:Number} = WElem
+
 macro WE_str(s::AbstractString)
     WElem(WSymbol(s))
 end
@@ -42,13 +45,13 @@ end
 (-)(a::WElem, b::Number) = a - WElem(b)
 (*)(a::WElem, b::Number) = a * WElem(b)
 (/)(a::WElem, b::Number) = a / WElem(b)
-(^)(a::WElem, b::Number) = a ^ WElem(b)
+(^)(a::WElem, b::Number) = a^WElem(b)
 
 (+)(a::Number, b::WElem) = WElem(a) + b
 (-)(a::Number, b::WElem) = WElem(a) - b
 (*)(a::Number, b::WElem) = WElem(a) * b
 (/)(a::Number, b::WElem) = WElem(a) / b
-(^)(a::Number, b::WElem) = WElem(a) ^ b
+(^)(a::Number, b::WElem) = WElem(a)^b
 
 WElem(val::Complex) = WElem(real(val)) + WElem(imag(val)) * WE"I"
 WElem(val::Rational) = WElem(numerator(val)) / WElem(denominator(val))
@@ -62,36 +65,38 @@ simplify(x::WElem) = weval(WE"Simplify"(x))
 struct WSolver
     solver::WSymbol
 end
+
 macro WS_str(s::AbstractString)
     WSolver(WSymbol(s))
 end
 
-function _wjaggedarray(x::AbstractArray{WElem,N}) where {N}
+function wjaggedlist(x::AbstractArray{WElem,N}) where {N}
     if N == 1
-        map(y -> y.val, x)
+        WExpr(W"List", map(y -> y.val, x))
     else
         s = size(x)
         x = reshape(x, s[1], :)
-        _wjaggedarray.(reshape(x[i, :], s[2:N]) for i in 1:s[1])
+        WExpr(W"List", wjaggedlist.(reshape(x[i, :], s[2:N]) for i in 1:s[1]))
     end
 end
-function _parsearray(x::WExpr)
-    x.head == W"List" || error("")
-    if all(y -> y isa WExpr && y.head == W"List", x.args)
-        x = _parsearray.(x.args)
-        cat(x...; dims = ndims(first(x)) + 1)
+function parsewlist(x::WExpr, reccall::Bool = false)
+    iswlist(x) || error("")
+    if all(y -> iswlist(y), x.args)
+        x = parsewlist.(x.args, true)
+        x = cat(x...; dims = ndims(first(x)) + 1)
+        reccall ? x : permutedims(x, ndims(x):-1:1)
     else
         WElem.(x.args)
     end
 end
-function (s::WSolver)(a::AbstractMatrix{WElem}, rnum::Int = 1)
-    r = weval((s.solver)(_wjaggedarray(a)))
-    if rnum == 1
-        _iswlist(r) ? _parsearray(r) : r
+
+function (s::WSolver)(a::AbstractArray{WElem}, rissingle::Bool = false)
+    r = weval((s.solver)(wjaggedlist(a)))
+    if rissingle
+        iswlist(r) ? parsewlist(r) : WElem(r)
     else
-        r.head == W"List" || error("")
-        r = r.args
-        map(x -> _iswlist(x) ? _parsearray(x) : x, r)
+        iswlist(r) || error("")
+        map(x -> iswlist(x) ? parsewlist(x) : WElem(x), r.args)
     end
 end
 
@@ -126,8 +131,8 @@ adjoint(a::WElem) = WE"Conjugate"(a)
 
 # -----
 
-weigen(x::AbstractMatrix{WElem}) = WS"Eigensystem"(x, 2)
-wsvd(x::AbstractMatrix{WElem}) = WS"SingularValueDecomposition"(x, 3)
-wqr(x::AbstractMatrix{WElem}) = WS"QRDecomposition"(x, 2)
+weigen(x::AbstractMatrix{WElem}) = WS"Eigensystem"(x)
+wsvd(x::AbstractMatrix{WElem}) = WS"SingularValueDecomposition"(x)
+wqr(x::AbstractMatrix{WElem}) = WS"QRDecomposition"(x)
 
 end # module
