@@ -31,7 +31,6 @@ end
 function (s::WElem)(args...)
     s.val isa WSymbol || error("")
     all(x -> x isa Union{WElem,Number,WSymbol,WExpr,WInteger,WReal}, args) || error("")
-    any(x -> x isa AbstractIrrational, args) && error("Irrational is unsupported")
     args = map(x -> x isa WElem ? x : WElem(x), args)
     WElem((s.val)(map(x -> x.val, args)...))
 end
