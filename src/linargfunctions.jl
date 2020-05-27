@@ -28,6 +28,6 @@ function schur(x::Matrix{WElem})
     Schur(t, z, diag(t))
 end
 
-#TODO: add inv
+inv(x::Matrix{WElem}) = WS"Inverse"(x, true)
 pinv(x::AbstractMatrix{WElem}) = WS"PseudoInverse"(x, true)
 nullspace(x::AbstractMatrix{WElem}) = permutedims(WS"NullSpace"(x, true), (2,1))

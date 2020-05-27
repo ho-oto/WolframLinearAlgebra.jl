@@ -70,6 +70,7 @@ WElem(val::Irrational{:catalan}) = WE"Catalan"
 WElem(val::Complex) = WElem(real(val)) + WElem(imag(val)) * WE"I"
 WElem(val::Rational) = WElem(numerator(val)) / WElem(denominator(val))
 
+inv(a::WElem) = 1 / a
 sqrt(a::WElem) = WE"Sqrt"(a)
 sin(a::WElem) = WE"Sin"(a)
 cos(a::WElem) = WE"Cos"(a)
