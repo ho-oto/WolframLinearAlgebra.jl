@@ -1,4 +1,4 @@
-function eigen(x::AbstractMatrix{WElem})
+function eigen(x::Matrix{WElem})
     @info "use wolframscript"
     u, v = WS"Eigensystem"(x)
     Eigen(u, transpose(v))
@@ -16,7 +16,7 @@ function qr(x::Matrix{WElem})
     (Q = q', R = r)
 end
 
-function lq(x::AbstractMatrix{WElem}) # TODO: check
+function lq(x::Matrix{WElem})
     @info "use wolframscript"
     q, r = WS"QRDecomposition"(permutedims(x, (2,1)))
     (L = transpose(r), Q = conj(q))
@@ -29,5 +29,5 @@ function schur(x::Matrix{WElem})
 end
 
 inv(x::Matrix{WElem}) = WS"Inverse"(x, true)
-pinv(x::AbstractMatrix{WElem}) = WS"PseudoInverse"(x, true)
-nullspace(x::AbstractMatrix{WElem}) = permutedims(WS"NullSpace"(x, true), (2,1))
+pinv(x::Matrix{WElem}) = WS"PseudoInverse"(x, true)
+nullspace(x::Matrix{WElem}) = permutedims(WS"NullSpace"(x, true), (2,1))
