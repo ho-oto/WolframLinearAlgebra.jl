@@ -1,6 +1,6 @@
 module WolframLinearAlgebra
 
-import Base: promote_rule, zero, one, +, -, *, /, ^, sqrt, conj, adjoint
+import Base: promote_rule, zero, one, +, -, *, /, ^, sqrt, conj, adjoint, copy
 import Base: sin, cos, tan, sinh, cosh, tanh, asin, acos, atan, asinh, acosh, atanh
 import Base: log, log2, log10, exp
 
@@ -19,6 +19,7 @@ struct WElem
 end
 
 promote_rule(::Type{WElem}, ::Type{T}) where {T<:Number} = WElem
+copy(x::WElem) = WElem(deepcopy(x.val))
 weval(x::WElem) = WElem(weval(x.val))
 
 macro WE_str(s::AbstractString)
