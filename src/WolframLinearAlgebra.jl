@@ -1,7 +1,7 @@
 module WolframLinearAlgebra
 
 import Base: OneTo, HasShape, promote_rule, convert, zero, one, size, axes, ndims, length
-import Base: firstindex, lastindex, IteratorSize, keys, first, last, copy, promote_op
+import Base: firstindex, lastindex, IteratorSize, keys, first, last, copy
 import Base: +, -, *, /, ^, inv, sqrt, conj, adjoint, transpose
 import Base: sin, cos, tan, sinh, cosh, tanh, asin, acos, atan, asinh, acosh, atanh
 import Base: log, log2, log10, exp
