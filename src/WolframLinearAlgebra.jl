@@ -4,7 +4,10 @@ import Base: promote_rule, zero, one, +, -, *, /, ^, sqrt, conj, adjoint, copy
 import Base: sin, cos, tan, sinh, cosh, tanh, asin, acos, atan, asinh, acosh, atanh
 import Base: log, log2, log10, exp
 
-import MathLink: WSymbol, WExpr, WInteger, WReal, weval, parseexpr, @W_str
+using LinearAlgebra
+import LinearAlgebra: Eigen, eigen, SVD, svd, Schur, schur
+import LinearAlgebra: qr, lq
+import LinearAlgebra: pinv, nullspace
 
 export WElem, WSolver, @WE_str, @WE_cmd, @WS_str
 export weval, simplify
