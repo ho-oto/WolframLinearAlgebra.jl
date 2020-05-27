@@ -15,6 +15,7 @@ function wjaggedlist(x::AbstractArray{WElem,N}) where {N}
         WExpr(W"List", wjaggedlist.(reshape(x[i, :], s[2:N]) for i in 1:s[1]))
     end
 end
+
 function parsewlist(x::WExpr, reccall::Bool = false)
     iswlist(x) || error("")
     if all(y -> iswlist(y), x.args)
@@ -26,8 +27,8 @@ function parsewlist(x::WExpr, reccall::Bool = false)
     end
 end
 
-function (s::WSolver)(a::AbstractArray{WElem}, rissingle::Bool = false)
-    r = weval((s.solver)(wjaggedlist(a)))
+function (s::WSolver)(a::AbstractArray{WElem}, rissingle::Bool = false; kargs...)
+    r = weval((s.solver)(wjaggedlist(a)); kargs...)
     if rissingle
         iswlist(r) ? parsewlist(r) : WElem(r)
     else

@@ -93,7 +93,7 @@ adjoint(a::WElem) = WE"Conjugate"(a)
 transpose(a::AbstractMatrix{WElem}) = permutedims(a, (2,1))
 adjoint(a::AbstractMatrix{WElem}) = transpose(conj(a))
 
-weval(x::WElem) = WElem(weval(x.val))
+weval(x::WElem; kargs...) = WElem(weval(x.val; kargs...))
 
-simplify(x::WElem) = weval(WE"Simplify"(x)) # TODO: keyword arguments
-n(x::WElem) = weval(WE"N"(x)) # TODO: keyword arguments
+simplify(x::WElem; kargs...) = weval(WE"Simplify"(x); kargs...)
+n(x::WElem; kargs...) = weval(WE"N"(x); kargs...)
