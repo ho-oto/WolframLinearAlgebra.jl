@@ -18,6 +18,14 @@ macro WE_cmd(c::Cmd)
     WElem(parseexpr(c))
 end
 
+WElem(val::Irrational{:π}) = WE"Pi"
+WElem(val::Irrational{:ℯ}) = WE"E"
+WElem(val::Irrational{:φ}) = WE"GoldenRatio"
+WElem(val::Irrational{:γ}) = WE"EulerGamma"
+WElem(val::Irrational{:catalan}) = WE"Catalan"
+WElem(val::Complex) = WE"Complex"(real(val), real(val))
+WElem(val::Rational) = WE"Rational"(numerator(val), denominator(val))
+
 promote_rule(::Type{WElem}, ::Type{T}) where {T<:Number} = WElem
 
 convert(::Type{WElem}, x::Number) = WElem(x)
@@ -61,14 +69,6 @@ copy(x::WElem) = WElem(deepcopy(x.val))
 (*)(a::Number, b::WElem) = WElem(a) * b
 (/)(a::Number, b::WElem) = WElem(a) / b
 (^)(a::Number, b::WElem) = WElem(a)^b
-
-WElem(val::Irrational{:π}) = WE"Pi"
-WElem(val::Irrational{:ℯ}) = WE"E"
-WElem(val::Irrational{:φ}) = WE"GoldenRatio"
-WElem(val::Irrational{:γ}) = WE"EulerGamma"
-WElem(val::Irrational{:catalan}) = WE"Catalan"
-WElem(val::Complex) = WElem(real(val)) + WElem(imag(val)) * WE"I"
-WElem(val::Rational) = WElem(numerator(val)) / WElem(denominator(val))
 
 inv(a::WElem) = 1 / a
 sqrt(a::WElem) = WE"Sqrt"(a)
