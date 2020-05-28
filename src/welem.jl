@@ -97,4 +97,14 @@ adjoint(a::AbstractMatrix{WElem}) = transpose(conj(a))
 weval(x::WElem; kargs...) = WElem(weval(x.val; kargs...))
 
 simplify(x::WElem; kargs...) = weval(WE"Simplify"(x); kargs...)
-n(x::WElem; kargs...) = weval(WE"N"(x); kargs...)
+
+function n(x::WElem; kargs...)
+    x = weval(WE"N"(x); kargs...)
+    if x.val isa Real
+        x.val
+    elseif x.val isa WExpr && x.val.head == W"Complex"
+        r, i = x.val.args
+        Complex(r, i)
+    end
+end
+n(x::AbstractArray{WElem}; kargs...) = n.(x; kargs...)
