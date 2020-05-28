@@ -23,7 +23,7 @@ WElem(val::Irrational{:ℯ}) = WE"E"
 WElem(val::Irrational{:φ}) = WE"GoldenRatio"
 WElem(val::Irrational{:γ}) = WE"EulerGamma"
 WElem(val::Irrational{:catalan}) = WE"Catalan"
-WElem(val::Complex) = WE"Complex"(real(val), real(val))
+WElem(val::Complex) = WE"Complex"(real(val), imag(val))
 WElem(val::Rational) = WE"Rational"(numerator(val), denominator(val))
 
 promote_rule(::Type{WElem}, ::Type{T}) where {T<:Number} = WElem
