@@ -108,3 +108,7 @@ function n(x::WElem; kargs...)
     end
 end
 n(x::AbstractArray{WElem}; kargs...) = n.(x; kargs...)
+
+string(x::WElem) = weval(W"ToString"(x.val, W"InputForm"))
+show(io::IO, ::MIME"text/plain", x::WElem) = print(io, "WolframSymbol:\n",string(x))
+show(io::IO, x::WElem) = print(io, string(x))

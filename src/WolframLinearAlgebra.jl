@@ -5,6 +5,7 @@ import Base: firstindex, lastindex, IteratorSize, keys, first, last, copy
 import Base: +, -, *, /, ^, inv, sqrt, conj, adjoint, transpose
 import Base: sin, cos, tan, sinh, cosh, tanh, asin, acos, atan, asinh, acosh, atanh
 import Base: log, log2, log10, exp
+import Base: string, show
 
 import LinearAlgebra: Eigen, eigen, SVD, svd, Schur, schur
 import LinearAlgebra: qr, lq
