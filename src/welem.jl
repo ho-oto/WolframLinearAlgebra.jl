@@ -96,7 +96,14 @@ adjoint(a::AbstractMatrix{WElem}) = transpose(conj(a))
 
 weval(x::WElem; kargs...) = WElem(weval(x.val; kargs...))
 
-simplify(x::WElem; kargs...) = weval(WE"Simplify"(x); kargs...)
+function simplify(x::WElem; reals::Vector{WElem}=WElem[], kargs...)
+    if isempty(reals)
+        weval(WE"Simplify"(x); kargs...)
+    else
+        reals = map(x -> x.val, reals)
+        weval(WE"Simplify"(x, W"Element"(W"List"(reals...), W"Reals")); kargs...)
+    end
+end
 
 function n(x::WElem; kargs...)
     x = weval(WE"N"(x); kargs...)
